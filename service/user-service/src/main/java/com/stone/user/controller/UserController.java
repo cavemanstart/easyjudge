@@ -15,8 +15,10 @@ import com.stone.model.vo.LoginUserVO;
 import com.stone.model.vo.UserVO;
 import com.stone.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,7 +32,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
+    private final String SALT = "stone";
+    private final String DEFAULTUSERPASSWORD = "12345678";
     // region 登录相关
 
     /**
@@ -121,6 +124,8 @@ public class UserController {
         }
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT+DEFAULTUSERPASSWORD).getBytes());
+        user.setUserPassword(encryptPassword);
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(user.getId());

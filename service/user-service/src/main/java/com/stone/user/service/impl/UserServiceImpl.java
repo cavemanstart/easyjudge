@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stone.common.base.ErrorCode;
 import com.stone.common.constant.CommonConstant;
 import com.stone.common.exception.BusinessException;
+import com.stone.common.utils.JwtUtils;
 import com.stone.common.utils.SqlUtils;
 import com.stone.model.dto.user.UserQueryRequest;
 import com.stone.model.entity.User;
@@ -103,8 +104,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
-        // 3. 记录用户的登录态
-        request.getSession().setAttribute(USER_LOGIN_STATE, user);
+        // 3. 生成用户token，存入header
+        String token = JwtUtils.createToken(user.getId(), user.getUserName());
+        request.getSession().setAttribute("token",token);
         return this.getLoginUserVO(user);
     }
 
@@ -176,11 +178,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public boolean userLogout(HttpServletRequest request) {
-        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
+        if (request.getSession().getAttribute("token") == null) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
         }
         // 移除登录态
-        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        request.getSession().removeAttribute("token");
         return true;
     }
 
