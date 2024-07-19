@@ -8,6 +8,7 @@ import com.stone.common.base.ErrorCode;
 import com.stone.common.constant.UserConstant;
 import com.stone.common.exception.BusinessException;
 import com.stone.common.exception.ThrowUtils;
+import com.stone.common.utils.JwtUtils;
 import com.stone.common.utils.ResultUtils;
 import com.stone.model.dto.user.*;
 import com.stone.model.entity.User;
@@ -15,7 +16,6 @@ import com.stone.model.vo.LoginUserVO;
 import com.stone.model.vo.UserVO;
 import com.stone.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
@@ -23,7 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
@@ -61,11 +64,11 @@ public class UserController {
      * 用户登录
      *
      * @param userLoginRequest
-     * @param request
+     * @param
      * @return
      */
     @PostMapping("/login")
-    public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public String userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -74,8 +77,8 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
-        return ResultUtils.success(loginUserVO);
+        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, response );
+        return JwtUtils.createToken(loginUserVO.getId(),loginUserVO.getUserName());
     }
 
     /**
@@ -85,11 +88,11 @@ public class UserController {
      * @return
      */
     @PostMapping("/logout")
-    public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
+    public BaseResponse<Boolean> userLogout(HttpServletRequest request, HttpServletResponse response) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = userService.userLogout(request);
+        boolean result = userService.userLogout(request,response);
         return ResultUtils.success(result);
     }
 

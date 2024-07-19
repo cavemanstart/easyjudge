@@ -9,6 +9,7 @@ import com.stone.model.vo.LoginUserVO;
 import com.stone.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -32,10 +33,10 @@ public interface UserService extends IService<User> {
      *
      * @param userAccount  用户账户
      * @param userPassword 用户密码
-     * @param request
+     * @param response
      * @return 脱敏后的用户信息
      */
-    LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
+    LoginUserVO userLogin(String userAccount, String userPassword, HttpServletResponse response);
 
     /**
      * 获取当前登录用户
@@ -75,7 +76,7 @@ public interface UserService extends IService<User> {
      * @param request
      * @return
      */
-    boolean userLogout(HttpServletRequest request);
+    boolean userLogout(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 获取脱敏的已登录用户信息
