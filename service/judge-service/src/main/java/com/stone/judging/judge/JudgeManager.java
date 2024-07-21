@@ -4,7 +4,7 @@ import com.stone.judging.judge.strategy.JavaLanguageJudgeStrategy;
 import com.stone.judging.judge.strategy.JudgeContext;
 import com.stone.judging.judge.strategy.JudgeStrategy;
 import com.stone.model.codesandbox.JudgeInfo;
-import com.stone.model.entity.ProblemSubmit;
+import com.stone.model.entity.QuestionSubmit;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,8 +20,8 @@ public class JudgeManager {
      * @return
      */
     JudgeInfo doJudge(JudgeContext judgeContext) {
-        ProblemSubmit problemSubmit = judgeContext.getProblemSubmit();
-        String language = problemSubmit.getLanguage();
+        QuestionSubmit questionSubmit = judgeContext.getQuestionSubmit();
+        String language = questionSubmit.getLanguage();
         JudgeStrategy judgeStrategy = new DefaultJudgeStrategy();
         if ("java".equals(language)) {
             judgeStrategy = new JavaLanguageJudgeStrategy();

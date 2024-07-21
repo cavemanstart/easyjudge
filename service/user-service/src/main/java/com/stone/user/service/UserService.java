@@ -36,7 +36,7 @@ public interface UserService extends IService<User> {
      * @param response
      * @return 脱敏后的用户信息
      */
-    LoginUserVO userLogin(String userAccount, String userPassword, HttpServletResponse response);
+    LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 获取当前登录用户

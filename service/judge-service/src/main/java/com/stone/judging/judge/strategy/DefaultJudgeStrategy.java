@@ -2,9 +2,9 @@ package com.stone.judging.judge.strategy;
 
 import cn.hutool.json.JSONUtil;
 import com.stone.model.codesandbox.JudgeInfo;
-import com.stone.model.dto.problem.JudgeCase;
-import com.stone.model.dto.problem.JudgeConfig;
-import com.stone.model.entity.Problem;
+import com.stone.model.dto.question.JudgeCase;
+import com.stone.model.dto.question.JudgeConfig;
+import com.stone.model.entity.Question;
 import com.stone.model.enums.JudgeInfoMessageEnum;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class DefaultJudgeStrategy implements JudgeStrategy {
         Long time = judgeInfo.getTime();
         List<String> inputList = judgeContext.getInputList();
         List<String> outputList = judgeContext.getOutputList();
-        Problem problem = judgeContext.getProblem();
+        Question question = judgeContext.getQuestion();
         List<JudgeCase> judgeCaseList = judgeContext.getJudgeCaseList();
         JudgeInfoMessageEnum judgeInfoMessageEnum = JudgeInfoMessageEnum.ACCEPTED;
         JudgeInfo judgeInfoResponse = new JudgeInfo();
@@ -48,7 +48,7 @@ public class DefaultJudgeStrategy implements JudgeStrategy {
             }
         }
         // 判断题目限制
-        String judgeConfigStr = problem.getJudgeConfig();
+        String judgeConfigStr = question.getJudgeConfig();
         JudgeConfig judgeConfig = JSONUtil.toBean(judgeConfigStr, JudgeConfig.class);
         Long needMemoryLimit = judgeConfig.getMemoryLimit();
         Long needTimeLimit = judgeConfig.getTimeLimit();

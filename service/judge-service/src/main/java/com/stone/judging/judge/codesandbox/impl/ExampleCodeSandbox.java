@@ -5,7 +5,7 @@ import com.stone.model.codesandbox.ExecuteCodeRequest;
 import com.stone.model.codesandbox.ExecuteCodeResponse;
 import com.stone.model.codesandbox.JudgeInfo;
 import com.stone.model.enums.JudgeInfoMessageEnum;
-import com.stone.model.enums.ProblemSubmitStatusEnum;
+import com.stone.model.enums.QuestionSubmitStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class ExampleCodeSandbox implements CodeSandbox {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
         executeCodeResponse.setOutputList(inputList);
         executeCodeResponse.setMessage("测试执行成功");
-        executeCodeResponse.setStatus(ProblemSubmitStatusEnum.SUCCEED.getValue());
+        executeCodeResponse.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setMessage(JudgeInfoMessageEnum.ACCEPTED.getText());
         judgeInfo.setMemory(100L);

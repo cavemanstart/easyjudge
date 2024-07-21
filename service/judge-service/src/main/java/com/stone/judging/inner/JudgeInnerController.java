@@ -1,6 +1,6 @@
 package com.stone.judging.inner;
 import com.stone.judging.judge.JudgeService;
-import com.stone.model.entity.ProblemSubmit;
+import com.stone.model.entity.QuestionSubmit;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,11 +19,11 @@ public class JudgeInnerController{
 
     /**
      * 判题
-     * @param problemSubmitId
+     * @param questionSubmitId
      * @return
      */
     @PostMapping("/do")
-    public ProblemSubmit doJudge(@RequestParam("problemSubmitId") long problemSubmitId){
-        return judgeService.doJudge(problemSubmitId);
+    public QuestionSubmit doJudge(@RequestParam("questionSubmitId") long questionSubmitId){
+        return judgeService.doJudge(questionSubmitId);
     }
 }

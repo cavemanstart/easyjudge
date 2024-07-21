@@ -21,7 +21,7 @@ import static com.stone.common.constant.UserConstant.USER_LOGIN_STATE;
  * 用户服务
  *
  */
-@FeignClient(name = "user-service")
+@FeignClient(name = "user-service", path = "/api/user/inner")
 public interface UserFeignClient {
 
     /**

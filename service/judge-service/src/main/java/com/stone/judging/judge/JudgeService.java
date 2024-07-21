@@ -1,7 +1,7 @@
 package com.stone.judging.judge;
 
 
-import com.stone.model.entity.ProblemSubmit;
+import com.stone.model.entity.QuestionSubmit;
 
 /**
  * 判题服务
@@ -10,8 +10,8 @@ public interface JudgeService {
 
     /**
      * 判题
-     * @param problemSubmitId
+     * @param questionSubmitId
      * @return
      */
-    ProblemSubmit doJudge(long problemSubmitId);
+    QuestionSubmit doJudge(long questionSubmitId);
 }

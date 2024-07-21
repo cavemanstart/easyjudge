@@ -1,9 +1,9 @@
 package com.stone.judging.judge.strategy;
 
 import com.stone.model.codesandbox.JudgeInfo;
-import com.stone.model.dto.problem.JudgeCase;
-import com.stone.model.entity.Problem;
-import com.stone.model.entity.ProblemSubmit;
+import com.stone.model.dto.question.JudgeCase;
+import com.stone.model.entity.Question;
+import com.stone.model.entity.QuestionSubmit;
 import lombok.Data;
 
 import java.util.List;
@@ -22,8 +22,8 @@ public class JudgeContext {
 
     private List<JudgeCase> judgeCaseList;
 
-    private Problem problem;
+    private Question question;
 
-    private ProblemSubmit problemSubmit;
+    private QuestionSubmit questionSubmit;
 
 }

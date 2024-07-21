@@ -68,7 +68,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public String userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
+    public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request,  HttpServletResponse response) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -77,8 +77,10 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, response );
-        return JwtUtils.createToken(loginUserVO.getId(),loginUserVO.getUserName());
+        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request, response);
+        String token = JwtUtils.createToken(loginUserVO.getId(), loginUserVO.getUserName());
+        loginUserVO.setToken(token);
+        return ResultUtils.success(loginUserVO);
     }
 
     /**
