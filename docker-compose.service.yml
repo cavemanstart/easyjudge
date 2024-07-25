@@ -1,0 +1,54 @@
+version: '3'
+services:
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8101:8101"
+    networks:
+      - mynetwork
+
+  user-service:
+    container_name: user-service
+    build:
+      context: ./service/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8102:8102"
+    networks:
+      - mynetwork
+    depends_on:
+      - gateway
+
+  problem-service:
+    container_name: question-service
+    build:
+      context: ./service/problem-service
+      dockerfile: Dockerfile
+    ports:
+      - "8103:8103"
+    networks:
+      - mynetwork
+    depends_on:
+      - user-service
+      - gateway
+
+  judge-service:
+    container_name: judge-service
+    build:
+      context: ./service/judge-service
+      dockerfile: Dockerfile
+    ports:
+      - "8104:8104"
+    networks:
+      - mynetwork
+    depends_on:
+      - user-service
+      - problem-service
+      - gateway
+
+# 网络，不定义的话就是默认网络
+networks:
+  mynetwork:
