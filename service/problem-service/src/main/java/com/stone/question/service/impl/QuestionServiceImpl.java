@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
-* @author 李stone
+* @author stone
 * @description 针对表【question(题目)】的数据库操作Service实现
 * @createDate 2023-08-07 20:58:00
 */
@@ -157,7 +157,20 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         return questionVOPage;
     }
 
-
+    @Override
+    public boolean addSubmit(long questionId) {
+        Question question = baseMapper.selectById(questionId);
+        question.setSubmitNum(question.getSubmitNum()+1);
+        int insert = baseMapper.updateById(question);
+        return insert==1;
+    }
+    @Override
+    public boolean addAccept(long questionId) {
+        Question question = baseMapper.selectById(questionId);
+        question.setAcceptedNum(question.getAcceptedNum()+1);
+        int insert = baseMapper.updateById(question);
+        return insert==1;
+    }
 }
 
 

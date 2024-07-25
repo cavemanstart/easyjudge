@@ -36,4 +36,13 @@ public class QuestionInnerController {
         return questionSubmitService.updateById(questionSubmit);
     }
 
+    @GetMapping("/addSubmit")
+    public boolean addSubmit(@RequestParam("questionId") long questionId){
+        return questionService.addSubmit(questionId);
+    }
+
+    @GetMapping("/addAccept")
+    public boolean addAccept(@RequestParam("questionId") long questionId){
+        return questionService.addAccept(questionId);
+    }
 }

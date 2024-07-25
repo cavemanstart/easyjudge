@@ -23,7 +23,7 @@ public class ExecuteCodeResponse {
     /**
      * 执行状态
      */
-    private Integer status;
+    private String status;
 
     /**
      * 判题信息

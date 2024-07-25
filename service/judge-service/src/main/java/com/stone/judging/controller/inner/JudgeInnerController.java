@@ -1,4 +1,4 @@
-package com.stone.judging.inner;
+package com.stone.judging.controller.inner;
 import com.stone.judging.judge.JudgeService;
 import com.stone.model.entity.QuestionSubmit;
 import org.springframework.web.bind.annotation.PostMapping;
