@@ -28,7 +28,10 @@ public class Question implements Serializable {
      * 内容
      */
     private String content;
-
+    /**
+     * 示例输入输出（json数组）
+     */
+    private String exampleCase;
     /**
      * 标签列表（json 数组）
      */

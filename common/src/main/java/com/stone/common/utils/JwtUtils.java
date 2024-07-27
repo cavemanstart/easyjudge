@@ -6,7 +6,7 @@ import java.util.Calendar;
 
 public class JwtUtils {
     //token超时变量，N（秒）后
-    public static final int TOKEN_TIMEOUT = 60*60*1;
+    public static final int TOKEN_TIMEOUT = 3*60*60;
     //  密钥
     public static final String APP_SECRET = "xxx@#$%^&dong";
 
