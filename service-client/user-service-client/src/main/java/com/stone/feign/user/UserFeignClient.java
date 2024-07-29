@@ -2,10 +2,11 @@ package com.stone.feign.user;
 
 import com.stone.model.entity.User;
 import com.stone.model.enums.UserRoleEnum;
-import com.stone.model.vo.UserVO;
+import com.stone.model.vo.user.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,26 +25,19 @@ public interface UserFeignClient {
      * @param userId
      * @return
      */
-    @GetMapping("/get/id")
-    User getById(@RequestParam("userId") long userId);
+    @GetMapping("/get/{userId}")
+    User getById(@PathVariable long userId);
 
-    /**
-     * 根据 id 获取用户列表
-     * @param idList
-     * @return
-     */
-    @GetMapping("/get/ids")
-    List<User> listByIds(@RequestParam("idList") Collection<Long> idList);
+    @GetMapping("/get/{idList}")
+    List<User> listByIds(@PathVariable Collection<Long> idList);
 
     /**
      * 获取当前登录用户
-     *
      * @param request
      * @return
      */
     @GetMapping("/get/login")
-
-    User getLoginUser(HttpServletRequest request);
+    public User getLoginUser(HttpServletRequest request);
     /**
      * 是否为管理员
      *

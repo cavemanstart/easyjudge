@@ -21,13 +21,13 @@ public class QuestionInnerController {
     @Resource
     private QuestionSubmitService questionSubmitService;
 
-    @GetMapping("/get/id")
-    public Question getQuestionById(@RequestParam("questionId") long questionId) {
+    @GetMapping("/get/{questionId}")
+    public Question getQuestionById(@PathVariable long questionId) {
         return questionService.getById(questionId);
     }
 
-    @GetMapping("/question_submit/get/id")
-    public QuestionSubmit getQuestionSubmitById(@RequestParam("questionId") long questionSubmitId) {
+    @GetMapping("/question_submit/get/{questionSubmitId}")
+    public QuestionSubmit getQuestionSubmitById(@PathVariable long questionSubmitId) {
         return questionSubmitService.getById(questionSubmitId);
     }
 
@@ -36,13 +36,13 @@ public class QuestionInnerController {
         return questionSubmitService.updateById(questionSubmit);
     }
 
-    @GetMapping("/addSubmit")
-    public boolean addSubmit(@RequestParam("questionId") long questionId){
+    @GetMapping("/addSubmit/{questionId}")
+    public boolean addSubmit(@PathVariable long questionId){
         return questionService.addSubmit(questionId);
     }
 
-    @GetMapping("/addAccept")
-    public boolean addAccept(@RequestParam("questionId") long questionId){
+    @GetMapping("/addAccept/{questionId}")
+    public boolean addAccept(@PathVariable long questionId){
         return questionService.addAccept(questionId);
     }
 }

@@ -12,8 +12,8 @@ import com.stone.common.utils.JwtUtils;
 import com.stone.common.utils.ResultUtils;
 import com.stone.model.dto.user.*;
 import com.stone.model.entity.User;
-import com.stone.model.vo.LoginUserVO;
-import com.stone.model.vo.UserVO;
+import com.stone.model.vo.user.LoginUserVO;
+import com.stone.model.vo.user.UserVO;
 import com.stone.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/")
@@ -164,12 +162,11 @@ public class UserController {
      * 根据 id 获取用户（仅管理员）
      *
      * @param id
-     * @param request
      * @return
      */
-    @GetMapping("/get")
+    @GetMapping("/get/{id}")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
+    public BaseResponse<User> getUserById(@PathVariable long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -182,12 +179,11 @@ public class UserController {
      * 根据 id 获取包装类
      *
      * @param id
-     * @param request
      * @return
      */
-    @GetMapping("/get/vo")
-    public BaseResponse<UserVO> getUserVOById(long id, HttpServletRequest request) {
-        BaseResponse<User> response = getUserById(id, request);
+    @GetMapping("/get/vo/{id}")
+    public BaseResponse<UserVO> getUserVOById(@PathVariable long id) {
+        BaseResponse<User> response = getUserById(id);
         User user = response.getData();
         return ResultUtils.success(userService.getUserVO(user));
     }

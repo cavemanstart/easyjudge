@@ -1,5 +1,6 @@
 package com.stone.question.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.stone.common.annotation.AuthCheck;
@@ -15,10 +16,13 @@ import com.stone.model.dto.question.*;
 import com.stone.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.stone.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.stone.model.entity.Question;
+import com.stone.model.entity.QuestionFavour;
 import com.stone.model.entity.QuestionSubmit;
 import com.stone.model.entity.User;
-import com.stone.model.vo.QuestionSubmitVO;
-import com.stone.model.vo.QuestionVO;
+import com.stone.model.vo.question.QuestionFavourVo;
+import com.stone.model.vo.question.QuestionSubmitVO;
+import com.stone.model.vo.question.QuestionVO;
+import com.stone.question.service.QuestionFavourService;
 import com.stone.question.service.QuestionService;
 import com.stone.question.service.QuestionSubmitService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +51,8 @@ public class QuestionController {
     @Resource
     private QuestionSubmitService questionSubmitService;
 
+    @Resource
+    private QuestionFavourService questionFavourService;
     private final static Gson GSON = new Gson();
 
     // region 增删改查
@@ -155,8 +161,8 @@ public class QuestionController {
      * @param id
      * @return
      */
-    @GetMapping("/get")
-    public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
+    @GetMapping("/get/{id}")
+    public BaseResponse<Question> getQuestionById(@PathVariable long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -178,8 +184,8 @@ public class QuestionController {
      * @param id
      * @return
      */
-    @GetMapping("/get/vo")
-    public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
+    @GetMapping("/get/vo/{id}")
+    public BaseResponse<QuestionVO> getQuestionVOById(@PathVariable long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -332,5 +338,14 @@ public class QuestionController {
         // 返回脱敏信息
         return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
     }
-
+    @GetMapping("/questionFavour/page/{questionId}/{current}/{size}")
+    public BaseResponse<Page<QuestionFavourVo>> getQuestionFavourListPages(@PathVariable long questionId,
+                                                                           @PathVariable long current,
+                                                                           @PathVariable long size){
+        LambdaQueryWrapper<QuestionFavour> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(QuestionFavour::getQuestionId,questionId);
+        Page<QuestionFavour> page = questionFavourService.page(new Page<>(current, size), lambdaQueryWrapper);
+        Page<QuestionFavourVo> voPage = questionFavourService.getQuestionFavourVoPage(page);
+        return ResultUtils.success(voPage);
+    }
 }

@@ -1,6 +1,5 @@
 package com.stone.judging.controller.inner;
 import com.stone.judging.judge.JudgeService;
-import com.stone.judging.service.AsyncService;
 import com.stone.model.entity.QuestionSubmit;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * 该服务仅内部调用，不是给前端的
@@ -23,7 +19,7 @@ public class JudgeInnerController{
     @Resource
     private JudgeService judgeService;
     @Resource
-    private AsyncService<QuestionSubmit> asyncService;
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     /**
      * 判题
      * @param questionSubmitId
@@ -32,10 +28,11 @@ public class JudgeInnerController{
     @PostMapping("/do")
     public QuestionSubmit doJudge(@RequestParam("questionSubmitId") long questionSubmitId) {
         QuestionSubmit questionSubmit = null;
-        Callable<QuestionSubmit> task = ()-> judgeService.doJudge(questionSubmitId);
-        Future<QuestionSubmit> questionSubmitFuture = asyncService.submitAsyncTask(task);
+        CompletableFuture<QuestionSubmit> completableFuture = CompletableFuture.supplyAsync(
+                ()-> judgeService.doJudge(questionSubmitId), threadPoolTaskExecutor
+        );
         try {
-            questionSubmit = questionSubmitFuture.get();
+            questionSubmit = completableFuture.get();
         } catch (Exception e) {
             e.printStackTrace();
         }

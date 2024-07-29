@@ -2,7 +2,6 @@ package com.stone.user.service.impl;
 
 
 import com.alibaba.nacos.client.naming.utils.CollectionUtils;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,8 +13,8 @@ import com.stone.common.utils.SqlUtils;
 import com.stone.model.dto.user.UserQueryRequest;
 import com.stone.model.entity.User;
 import com.stone.model.enums.UserRoleEnum;
-import com.stone.model.vo.LoginUserVO;
-import com.stone.model.vo.UserVO;
+import com.stone.model.vo.user.LoginUserVO;
+import com.stone.model.vo.user.UserVO;
 import com.stone.user.mapper.UserMapper;
 import com.stone.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;

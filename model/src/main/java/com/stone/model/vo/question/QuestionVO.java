@@ -1,8 +1,9 @@
-package com.stone.model.vo;
+package com.stone.model.vo.question;
 
 import cn.hutool.json.JSONUtil;
 import com.stone.model.dto.question.JudgeConfig;
 import com.stone.model.entity.Question;
+import com.stone.model.vo.user.UserVO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

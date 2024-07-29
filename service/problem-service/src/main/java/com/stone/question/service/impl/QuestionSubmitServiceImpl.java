@@ -15,7 +15,7 @@ import com.stone.model.entity.QuestionSubmit;
 import com.stone.model.entity.User;
 import com.stone.model.enums.QuestionSubmitLanguageEnum;
 import com.stone.model.enums.QuestionSubmitStatusEnum;
-import com.stone.model.vo.QuestionSubmitVO;
+import com.stone.model.vo.question.QuestionSubmitVO;
 import com.stone.question.mapper.QuestionSubmitMapper;
 import com.stone.question.rabbitmq.MyMessageProducer;
 import com.stone.question.service.QuestionService;

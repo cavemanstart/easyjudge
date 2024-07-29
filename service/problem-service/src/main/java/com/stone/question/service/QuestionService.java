@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.stone.model.dto.question.QuestionQueryRequest;
 import com.stone.model.entity.Question;
-import com.stone.model.vo.QuestionVO;
+import com.stone.model.vo.question.QuestionVO;
 
 import javax.servlet.http.HttpServletRequest;
 

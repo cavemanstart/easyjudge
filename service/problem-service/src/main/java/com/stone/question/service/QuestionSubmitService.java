@@ -8,7 +8,7 @@ import com.stone.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.stone.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.stone.model.entity.QuestionSubmit;
 import com.stone.model.entity.User;
-import com.stone.model.vo.QuestionSubmitVO;
+import com.stone.model.vo.question.QuestionSubmitVO;
 
 public interface QuestionSubmitService extends IService<QuestionSubmit> {
     

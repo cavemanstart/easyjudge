@@ -1,4 +1,4 @@
-package com.stone.model.vo;
+package com.stone.model.vo.user;
 
 import java.io.Serializable;
 import java.util.Date;

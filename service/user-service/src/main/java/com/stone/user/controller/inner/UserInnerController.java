@@ -1,10 +1,7 @@
 package com.stone.user.controller.inner;
 import com.stone.model.entity.User;
 import com.stone.user.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +23,8 @@ public class UserInnerController{
      * @param userId
      * @return
      */
-    @GetMapping("/get/id")
-    public User getById(@RequestParam("userId") long userId) {
+    @GetMapping("/get/{userId}")
+    public User getById(@PathVariable long userId) {
         return userService.getById(userId);
     }
 
@@ -36,8 +33,8 @@ public class UserInnerController{
      * @param idList
      * @return
      */
-    @GetMapping("/get/ids")
-    public List<User> listByIds(@RequestParam("idList") Collection<Long> idList) {
+    @GetMapping("/get/{idList}")
+    List<User> listByIds(@PathVariable Collection<Long> idList) {
         return userService.listByIds(idList);
     }
     /**
