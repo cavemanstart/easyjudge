@@ -1,7 +1,5 @@
 package com.stone.feign.user;
 
-import com.stone.common.base.ErrorCode;
-import com.stone.common.exception.BusinessException;
 import com.stone.model.entity.User;
 import com.stone.model.enums.UserRoleEnum;
 import com.stone.model.vo.UserVO;
@@ -13,9 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
-
-import static com.stone.common.constant.UserConstant.USER_LOGIN_STATE;
-
 
 /**
  * 用户服务
@@ -46,17 +41,9 @@ public interface UserFeignClient {
      * @param request
      * @return
      */
-    default User getLoginUser(HttpServletRequest request) {
-        // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
-        if (currentUser == null || currentUser.getId() == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-        // 可以考虑在这里做全局权限校验
-        return currentUser;
-    }
+    @GetMapping("/get/login")
 
+    User getLoginUser(HttpServletRequest request);
     /**
      * 是否为管理员
      *

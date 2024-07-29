@@ -23,10 +23,12 @@ import com.stone.question.service.QuestionSubmitService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +39,8 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
     implements QuestionSubmitService {
-    
+    @Resource
+    ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Resource
     private QuestionService questionService;
 
@@ -85,7 +88,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         Long questionSubmitId = questionSubmit.getId();
         // 发送消息
-        myMessageProducer.sendMessage("code_exchange", "my_routingKey", String.valueOf(questionSubmitId));
+        CompletableFuture.runAsync(()->{
+            myMessageProducer.sendMessage("code_exchange", "my_routingKey", String.valueOf(questionSubmitId));
+        },threadPoolTaskExecutor);
         // 执行判题服务
 //        CompletableFuture.runAsync(() -> {
 //            judgeFeignClient.doJudge(questionSubmitId);

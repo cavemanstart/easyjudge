@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,5 +40,15 @@ public class UserInnerController{
     public List<User> listByIds(@RequestParam("idList") Collection<Long> idList) {
         return userService.listByIds(idList);
     }
+    /**
+     * 获取当前登录用户
+     * @param request
+     * @return
+     */
+    @GetMapping("/get/login")
+    public User getLoginUser(HttpServletRequest request) {
+        return userService.getLoginUser(request.getHeader("Authorization"));
+    }
+
 
 }

@@ -18,7 +18,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         //获取请求头中传过来的token
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         Map<String, Object> map = new HashMap<>();
         try {
             //校验token
