@@ -1,4 +1,4 @@
-package com.stone.question.config;
+package com.stone.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +7,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
-public class ThreadPoolTaskExecutorConfig {
+public class ThreadPoolConfig {
     @Bean
     public ThreadPoolTaskExecutor myThreadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
