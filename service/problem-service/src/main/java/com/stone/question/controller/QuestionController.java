@@ -338,14 +338,24 @@ public class QuestionController {
         // 返回脱敏信息
         return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
     }
-    @GetMapping("/questionFavour/page/{questionId}/{current}/{size}")
-    public BaseResponse<Page<QuestionFavourVo>> getQuestionFavourListPages(@PathVariable long questionId,
+    @GetMapping("/questionFavour/page/{userId}/{current}/{size}")
+    public BaseResponse<Page<QuestionFavourVo>> getQuestionFavourListPages(@PathVariable long userId,
                                                                            @PathVariable long current,
                                                                            @PathVariable long size){
         LambdaQueryWrapper<QuestionFavour> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(QuestionFavour::getQuestionId,questionId);
+        lambdaQueryWrapper.eq(QuestionFavour::getUserId,userId);
         Page<QuestionFavour> page = questionFavourService.page(new Page<>(current, size), lambdaQueryWrapper);
         Page<QuestionFavourVo> voPage = questionFavourService.getQuestionFavourVoPage(page);
         return ResultUtils.success(voPage);
+    }
+    @PostMapping("/questionFavour/addFavour")
+    public BaseResponse<Boolean> addFavour(@RequestBody QuestionFavourRequest questionFavourRequest){
+        boolean b = questionFavourService.addFavour(questionFavourRequest);
+        return ResultUtils.success(b);
+    }
+    @PostMapping("/questionFavour/deleteFavour")
+    public BaseResponse<Boolean> deleteFavour(@RequestBody DeleteRequest deleteRequest){
+        boolean b = questionFavourService.deleteFavour(deleteRequest.getId());
+        return ResultUtils.success(b);
     }
 }

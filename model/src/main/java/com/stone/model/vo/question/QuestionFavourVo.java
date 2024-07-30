@@ -17,7 +17,7 @@ public class QuestionFavourVo implements Serializable {
     /**
      * 题目 id
      */
-    private Long questionId;
+    private String questionTitle;
 
     /**
      * 创建时间
