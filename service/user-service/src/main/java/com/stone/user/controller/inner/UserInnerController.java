@@ -1,4 +1,5 @@
 package com.stone.user.controller.inner;
+import com.stone.feign.user.UserFeignClient;
 import com.stone.model.entity.User;
 import com.stone.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/inner")
-public class UserInnerController{
+public class UserInnerController implements UserFeignClient{
 
     @Resource
     private UserService userService;
@@ -33,19 +34,17 @@ public class UserInnerController{
      * @param idList
      * @return
      */
-    @GetMapping("/get/{idList}")
-    List<User> listByIds(@PathVariable Collection<Long> idList) {
+    @GetMapping("/get/list/{idList}")
+    public List<User> listByIds(@PathVariable Collection<Long> idList) {
         return userService.listByIds(idList);
     }
     /**
      * 获取当前登录用户
-     * @param request
+     * @param token
      * @return
      */
-    @GetMapping("/get/login")
-    public User getLoginUser(HttpServletRequest request) {
-        return userService.getLoginUser(request.getHeader("Authorization"));
+    @GetMapping("/get/login/{token}")
+    public User getLoginUser(@PathVariable String token){
+        return userService.getLoginUser(token);
     }
-
-
 }

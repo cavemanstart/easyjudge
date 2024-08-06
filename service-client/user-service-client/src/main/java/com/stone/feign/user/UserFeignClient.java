@@ -28,16 +28,16 @@ public interface UserFeignClient {
     @GetMapping("/get/{userId}")
     User getById(@PathVariable long userId);
 
-    @GetMapping("/get/{idList}")
+    @GetMapping("/get/list/{idList}")
     List<User> listByIds(@PathVariable Collection<Long> idList);
 
     /**
      * 获取当前登录用户
-     * @param request
+     * @param token
      * @return
      */
-    @GetMapping("/get/login")
-    public User getLoginUser(HttpServletRequest request);
+    @GetMapping("/get/login/{token}")
+    User getLoginUser(@PathVariable String token);
     /**
      * 是否为管理员
      *

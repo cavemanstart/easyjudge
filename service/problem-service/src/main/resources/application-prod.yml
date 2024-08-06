@@ -4,13 +4,13 @@ spring:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql:3306/easy_judge
+    url: jdbc:mysql://192.168.80.142:3307/easy_judge
     username: root
     password: 123456
   # Redis 配置
   redis:
     database: 1
-    host: redis
+    host: 192.168.80.142
     port: 6379
     timeout: 5000
   servlet:
@@ -22,7 +22,7 @@ spring:
       discovery:
         server-addr: nacos:8848
   rabbitmq:
-    host: rabbitmq
+    host: 192.168.80.142
     port: 5672
     password: guest
     username: guest

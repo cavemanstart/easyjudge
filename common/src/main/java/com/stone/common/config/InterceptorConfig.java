@@ -16,6 +16,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         //添加拦截器方法 传入我们自己的拦截器  这里的拦截器，是使用的JWT定义的拦截器
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**") //拦截规则 所有
+                .excludePathPatterns("/**/inner/**")//例外规则
                 .excludePathPatterns("/register")//例外规则
                 .excludePathPatterns("/login") //例外规则
                 .excludePathPatterns("/swagger-resources/**") //下面的例外规则，是swagger的
