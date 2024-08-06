@@ -25,13 +25,13 @@ public class GlobalAuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         String path = serverHttpRequest.getURI().getPath();
         //判断路径中是否包含 inner，只允许内部调用
-        //if (antPathMatcher.match("/**/inner/**", path)) {
-        //    ServerHttpResponse response = exchange.getResponse();
-        //    response.setStatusCode(HttpStatus.FORBIDDEN);
-        //    DataBufferFactory dataBufferFactory = response.bufferFactory();
-        //    DataBuffer dataBuffer = dataBufferFactory.wrap("无权限".getBytes(StandardCharsets.UTF_8));
-        //    return response.writeWith(Mono.just(dataBuffer));
-        //}
+        if (antPathMatcher.match("/**/inner/**", path)) {
+            ServerHttpResponse response = exchange.getResponse();
+            response.setStatusCode(HttpStatus.FORBIDDEN);
+            DataBufferFactory dataBufferFactory = response.bufferFactory();
+            DataBuffer dataBuffer = dataBufferFactory.wrap("无权限".getBytes(StandardCharsets.UTF_8));
+            return response.writeWith(Mono.just(dataBuffer));
+        }
         return chain.filter(exchange);
     }
 
