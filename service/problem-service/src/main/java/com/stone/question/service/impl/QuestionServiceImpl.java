@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
 /**
@@ -33,14 +34,11 @@ import java.util.stream.Collectors;
 * @description 针对表【question(题目)】的数据库操作Service实现
 * @createDate 2023-08-07 20:58:00
 */
-@Service()
+@Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     implements QuestionService {
-
-
     @Resource
     private UserFeignClient userFeignClient;
-
     /**
      * 校验题目是否合法
      * @param question
@@ -160,16 +158,20 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public boolean addSubmit(long questionId) {
         Question question = baseMapper.selectById(questionId);
-        question.setSubmitNum(question.getSubmitNum()+1);
+        synchronized (this){
+            question.setSubmitNum(question.getSubmitNum()+1);//保证原子性
+        }
         int insert = baseMapper.updateById(question);
         return insert==1;
     }
     @Override
     public boolean addAccept(long questionId) {
         Question question = baseMapper.selectById(questionId);
-        question.setAcceptedNum(question.getAcceptedNum()+1);
+        synchronized (this){
+            question.setAcceptedNum(question.getAcceptedNum() + 1);
+        }
         int insert = baseMapper.updateById(question);
-        return insert==1;
+        return insert == 1;
     }
 }
 

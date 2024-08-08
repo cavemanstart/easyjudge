@@ -26,4 +26,7 @@ public interface QuestionFeignClient {
 
     @GetMapping("/addAccept/{questionId}")
     boolean addAccept(@PathVariable long questionId);
+
+    @GetMapping("/getQuestionSubmitStatus/{questionSubmitId}")
+    String getQuestionSubmitStatus(@PathVariable long questionSubmitId);
 }

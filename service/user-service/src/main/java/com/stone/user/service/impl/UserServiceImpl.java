@@ -220,8 +220,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User getLoginUser(String token) {
         DecodedJWT tokenInfo = JwtUtils.getTokenInfo(token);
+        if(tokenInfo==null){
+            throw new BusinessException(518,"token失效");
+        }
         Long uid = tokenInfo.getClaim("uid").asLong();
-        User user = baseMapper.selectById(uid);
-        return user;
+        return baseMapper.selectById(uid);
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 @ComponentScan("com.stone")
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.stone.feign.user"})
+@EnableFeignClients(basePackages = {"com.stone.feign.user","com.stone.feign.judge"})
 public class QuestionApplication {
     public static void main(String[] args) {
         SpringApplication.run(QuestionApplication.class,args);

@@ -7,6 +7,7 @@ import com.stone.common.base.ErrorCode;
 import com.stone.common.constant.CommonConstant;
 import com.stone.common.exception.BusinessException;
 import com.stone.common.utils.SqlUtils;
+import com.stone.feign.judge.JudgeFeignClient;
 import com.stone.feign.user.UserFeignClient;
 import com.stone.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.stone.model.dto.questionsubmit.QuestionSubmitQueryRequest;
@@ -43,10 +44,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Resource
     private QuestionService questionService;
-
     @Resource
     private UserFeignClient userFeignClient;
 
+    @Resource
+    private JudgeFeignClient judgeFeignClient;
     @Resource
     private MyMessageProducer myMessageProducer;
 
@@ -92,9 +94,16 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             myMessageProducer.sendMessage("code_exchange", "my_routingKey", String.valueOf(questionSubmitId));
         },threadPoolTaskExecutor);
         // 执行判题服务
-//        CompletableFuture.runAsync(() -> {
-//            judgeFeignClient.doJudge(questionSubmitId);
-//        });
+        CompletableFuture.runAsync(() -> {//10秒后没有判题成功就自动判题
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if(!this.getQuestionSubmitStatus(questionSubmitId).equals(QuestionSubmitStatusEnum.WAITING.getText())){
+                judgeFeignClient.doJudge(questionSubmitId);
+            }
+        },threadPoolTaskExecutor);
         return questionSubmitId;
     }
 
@@ -155,7 +164,14 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         return questionSubmitVOPage;
     }
 
-
+    @Override
+    public String getQuestionSubmitStatus(long questionSubmitId) {
+        QuestionSubmit questionSubmit = baseMapper.selectById(questionSubmitId);
+        if(questionSubmit!=null){
+            return questionSubmit.getStatus();
+        }
+        return null;
+    }
 }
 
 

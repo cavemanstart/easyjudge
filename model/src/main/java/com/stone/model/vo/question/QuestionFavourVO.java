@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class QuestionFavourVo implements Serializable {
+public class QuestionFavourVO implements Serializable {
     private Long id;
 
     /**

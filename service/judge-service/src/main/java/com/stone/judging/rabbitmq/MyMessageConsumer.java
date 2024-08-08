@@ -1,7 +1,9 @@
 package com.stone.judging.rabbitmq;
 
 import com.rabbitmq.client.Channel;
+import com.stone.feign.question.QuestionFeignClient;
 import com.stone.judging.judge.JudgeService;
+import com.stone.model.enums.QuestionSubmitStatusEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -17,6 +19,8 @@ public class MyMessageConsumer {
 
     @Resource
     private JudgeService judgeService;
+    @Resource
+    private QuestionFeignClient questionFeignClient;
 
     // 指定程序监听的消息队列和确认机制
     @SneakyThrows
@@ -25,10 +29,15 @@ public class MyMessageConsumer {
         log.info("receiveMessage message = {}", message);
         long questionSubmitId = Long.parseLong(message);
         try {
-            judgeService.doJudge(questionSubmitId);
-            channel.basicAck(deliveryTag, false);
+            String questionSubmitStatus = questionFeignClient.getQuestionSubmitStatus(questionSubmitId);
+            if(!questionSubmitStatus.equals(QuestionSubmitStatusEnum.WAITING.getText())){
+                channel.basicNack(deliveryTag, false, false);//不重新入队
+            }else{
+                judgeService.doJudge(questionSubmitId);
+                channel.basicAck(deliveryTag, false);
+            }
         } catch (Exception e) {
-            channel.basicNack(deliveryTag, false, false);
+            channel.basicNack(deliveryTag, false, false);//不重新入队
         }
     }
 

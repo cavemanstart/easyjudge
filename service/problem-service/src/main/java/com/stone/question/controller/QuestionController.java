@@ -19,7 +19,8 @@ import com.stone.model.entity.Question;
 import com.stone.model.entity.QuestionFavour;
 import com.stone.model.entity.QuestionSubmit;
 import com.stone.model.entity.User;
-import com.stone.model.vo.question.QuestionFavourVo;
+import com.stone.model.vo.question.QuestionAddVO;
+import com.stone.model.vo.question.QuestionFavourVO;
 import com.stone.model.vo.question.QuestionSubmitVO;
 import com.stone.model.vo.question.QuestionVO;
 import com.stone.question.service.QuestionFavourService;
@@ -27,11 +28,14 @@ import com.stone.question.service.QuestionService;
 import com.stone.question.service.QuestionSubmitService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.EscapedErrors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 题目接口
@@ -53,6 +57,9 @@ public class QuestionController {
 
     @Resource
     private QuestionFavourService questionFavourService;
+
+    @Resource
+    private RedisTemplate<String, Long> redisTemplate;
     private final static Gson GSON = new Gson();
 
     // region 增删改查
@@ -312,14 +319,27 @@ public class QuestionController {
      * @return 提交记录的 id
      */
     @PostMapping("/question_submit/do")
-    public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
-                                               HttpServletRequest request) {
+    public BaseResponse<QuestionAddVO> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
+                                                        HttpServletRequest request) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         final User loginUser = userFeignClient.getLoginUser(request.getHeader("Authorization"));
-        long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
-        return ResultUtils.success(questionSubmitId);
+        String key = questionSubmitAddRequest.getQuestionId() + String.valueOf(loginUser.getId());
+        Long questionSubmitId = redisTemplate.opsForValue().get(key);
+        QuestionAddVO questionAddVO = new QuestionAddVO();
+        if(questionSubmitId!=null){
+            questionAddVO.setQuestionSubmitId(questionSubmitId);
+            QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
+            questionAddVO.setStatus(questionSubmit.getStatus());
+            return ResultUtils.success(questionAddVO);
+        }
+        questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
+        questionAddVO.setQuestionSubmitId(questionSubmitId);
+        QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
+        questionAddVO.setStatus(questionSubmit.getStatus());
+        redisTemplate.opsForValue().set(key,questionSubmitId,5, TimeUnit.SECONDS);
+        return ResultUtils.success(questionAddVO);
     }
 
     /**
@@ -342,13 +362,13 @@ public class QuestionController {
         return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
     }
     @GetMapping("/questionFavour/page/{userId}/{current}/{size}")
-    public BaseResponse<Page<QuestionFavourVo>> getQuestionFavourListPages(@PathVariable long userId,
+    public BaseResponse<Page<QuestionFavourVO>> getQuestionFavourListPages(@PathVariable long userId,
                                                                            @PathVariable long current,
                                                                            @PathVariable long size){
         LambdaQueryWrapper<QuestionFavour> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(QuestionFavour::getUserId,userId);
         Page<QuestionFavour> page = questionFavourService.page(new Page<>(current, size), lambdaQueryWrapper);
-        Page<QuestionFavourVo> voPage = questionFavourService.getQuestionFavourVoPage(page);
+        Page<QuestionFavourVO> voPage = questionFavourService.getQuestionFavourVoPage(page);
         return ResultUtils.success(voPage);
     }
     @PostMapping("/questionFavour/addFavour")

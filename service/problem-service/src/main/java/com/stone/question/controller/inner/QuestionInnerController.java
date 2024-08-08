@@ -45,4 +45,8 @@ public class QuestionInnerController {
     public boolean addAccept(@PathVariable long questionId){
         return questionService.addAccept(questionId);
     }
+    @GetMapping("/getQuestionSubmitStatus/{questionSubmitId}")
+    public String getQuestionSubmitStatus(@PathVariable long questionSubmitId){
+        return questionSubmitService.getQuestionSubmitStatus(questionSubmitId);
+    }
 }

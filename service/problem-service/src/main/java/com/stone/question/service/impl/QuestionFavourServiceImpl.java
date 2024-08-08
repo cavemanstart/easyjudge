@@ -2,14 +2,10 @@ package com.stone.question.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.stone.model.dto.question.QuestionEditRequest;
 import com.stone.model.dto.question.QuestionFavourRequest;
 import com.stone.model.entity.Question;
 import com.stone.model.entity.QuestionFavour;
-import com.stone.model.entity.QuestionSubmit;
-import com.stone.model.vo.question.QuestionFavourVo;
-import com.stone.model.vo.question.QuestionSubmitVO;
-import com.stone.model.vo.question.QuestionVO;
+import com.stone.model.vo.question.QuestionFavourVO;
 import com.stone.question.mapper.QuestionFavourMapper;
 import com.stone.question.service.QuestionFavourService;
 import com.stone.question.service.QuestionService;
@@ -26,13 +22,13 @@ public class QuestionFavourServiceImpl extends ServiceImpl<QuestionFavourMapper,
     @Resource
     private QuestionService questionService;
     @Override
-    public Page<QuestionFavourVo> getQuestionFavourVoPage(Page<QuestionFavour> page) {
+    public Page<QuestionFavourVO> getQuestionFavourVoPage(Page<QuestionFavour> page) {
         List<QuestionFavour> list = page.getRecords();
-        Page<QuestionFavourVo> voPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        Page<QuestionFavourVO> voPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         if (CollectionUtils.isEmpty(list)) {
             return voPage;
         }
-        List<QuestionFavourVo> voList = list.stream()
+        List<QuestionFavourVO> voList = list.stream()
                 .map(this::getQuestionFavourVo)
                 .collect(Collectors.toList());
         voPage.setRecords(voList);
@@ -53,8 +49,8 @@ public class QuestionFavourServiceImpl extends ServiceImpl<QuestionFavourMapper,
         return i>=1;
     }
 
-    private QuestionFavourVo getQuestionFavourVo(QuestionFavour questionFavour) {
-        QuestionFavourVo questionFavourVo = new QuestionFavourVo();
+    private QuestionFavourVO getQuestionFavourVo(QuestionFavour questionFavour) {
+        QuestionFavourVO questionFavourVo = new QuestionFavourVO();
         BeanUtils.copyProperties(questionFavour , questionFavourVo);
         Question question = questionService.getById(questionFavour.getQuestionId());
         questionFavourVo.setQuestionTitle(question.getTitle());
