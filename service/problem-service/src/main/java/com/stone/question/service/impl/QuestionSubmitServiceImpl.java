@@ -19,6 +19,7 @@ import com.stone.model.enums.QuestionSubmitStatusEnum;
 import com.stone.model.vo.question.QuestionSubmitVO;
 import com.stone.question.mapper.QuestionSubmitMapper;
 import com.stone.question.rabbitmq.MyMessageProducer;
+import com.stone.question.redis.RedisDistributedLock;
 import com.stone.question.service.QuestionService;
 import com.stone.question.service.QuestionSubmitService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -90,9 +91,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         Long questionSubmitId = questionSubmit.getId();
         // 发送消息
-        CompletableFuture.runAsync(()->{
+        CompletableFuture.runAsync(() -> {
             myMessageProducer.sendMessage("code_exchange", "my_routingKey", String.valueOf(questionSubmitId));
-        },threadPoolTaskExecutor);
+        }, threadPoolTaskExecutor);
         // 执行判题服务
         CompletableFuture.runAsync(() -> {//10秒后没有判题成功就自动判题
             try {
@@ -100,7 +101,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            if(!this.getQuestionSubmitStatus(questionSubmitId).equals(QuestionSubmitStatusEnum.WAITING.getText())){
+            RedisDistributedLock redisDistributedLock = new RedisDistributedLock(String.valueOf(questionSubmitId),"default");
+            boolean lock = redisDistributedLock.lock();
+            if(lock){//先获取锁
                 judgeFeignClient.doJudge(questionSubmitId);
             }
         },threadPoolTaskExecutor);

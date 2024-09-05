@@ -3,6 +3,7 @@ package com.stone.judging.rabbitmq;
 import com.rabbitmq.client.Channel;
 import com.stone.feign.question.QuestionFeignClient;
 import com.stone.judging.judge.JudgeService;
+import com.stone.judging.redis.RedisDistributedLock;
 import com.stone.model.enums.QuestionSubmitStatusEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +29,12 @@ public class MyMessageConsumer {
     public void receiveMessage(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
         log.info("receiveMessage message = {}", message);
         long questionSubmitId = Long.parseLong(message);
+
         try {
             String questionSubmitStatus = questionFeignClient.getQuestionSubmitStatus(questionSubmitId);
-            if(!questionSubmitStatus.equals(QuestionSubmitStatusEnum.WAITING.getText())){
-                channel.basicNack(deliveryTag, false, false);//不重新入队
-            }else{
+            RedisDistributedLock redisDistributedLock = new RedisDistributedLock(String.valueOf(questionSubmitId),"default");
+            boolean lock = redisDistributedLock.lock();
+            if(lock){
                 judgeService.doJudge(questionSubmitId);
                 channel.basicAck(deliveryTag, false);
             }
