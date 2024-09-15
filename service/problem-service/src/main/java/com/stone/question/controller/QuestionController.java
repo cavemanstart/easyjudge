@@ -36,6 +36,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,6 +62,7 @@ public class QuestionController {
 
     @Resource
     private RedisTemplate<String, Long> redisTemplate;
+    private Semaphore semaphore = new Semaphore(100);
     private final static Gson GSON = new Gson();
 
     // region 增删改查
@@ -335,11 +337,20 @@ public class QuestionController {
             questionAddVO.setStatus(questionSubmit.getStatus());
             return ResultUtils.success(questionAddVO);
         }
-        questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
-        questionAddVO.setQuestionSubmitId(questionSubmitId);
-        QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
-        questionAddVO.setStatus(questionSubmit.getStatus());
-        redisTemplate.opsForValue().set(key,questionSubmitId,5, TimeUnit.SECONDS);
+        //没有走缓存用semaphore限流
+        try {
+            semaphore.acquire();
+            questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
+            questionAddVO.setQuestionSubmitId(questionSubmitId);
+            QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
+            questionAddVO.setStatus(questionSubmit.getStatus());
+            redisTemplate.opsForValue().set(key,questionSubmitId,5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }finally {
+            semaphore.release();
+        }
         return ResultUtils.success(questionAddVO);
     }
 

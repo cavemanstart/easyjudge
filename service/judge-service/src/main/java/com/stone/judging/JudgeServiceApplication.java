@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"com.stone.feign.question"})
 public class JudgeServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(JudgeServiceApplication.class, args);
     }

@@ -158,7 +158,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public boolean addSubmit(long questionId) {
         Question question = baseMapper.selectById(questionId);
-        synchronized (this){
+        synchronized (String.valueOf(questionId).intern()){
             question.setSubmitNum(question.getSubmitNum()+1);//保证原子性
         }
         int insert = baseMapper.updateById(question);
@@ -167,7 +167,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public boolean addAccept(long questionId) {
         Question question = baseMapper.selectById(questionId);
-        synchronized (this){
+        synchronized (String.valueOf(questionId).intern()){
             question.setAcceptedNum(question.getAcceptedNum() + 1);
         }
         int insert = baseMapper.updateById(question);
