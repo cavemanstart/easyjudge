@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
@@ -154,11 +155,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         questionVOPage.setRecords(questionVOList);
         return questionVOPage;
     }
-
+    ConcurrentHashMap<Long,Object> concurrentHashMap = new ConcurrentHashMap<>();
     @Override
     public boolean addSubmit(long questionId) {
         Question question = baseMapper.selectById(questionId);
-        synchronized (String.valueOf(questionId).intern()){
+        Object object = concurrentHashMap.computeIfAbsent(questionId, s -> new Object());
+        synchronized (object){
             question.setSubmitNum(question.getSubmitNum()+1);//保证原子性
         }
         int insert = baseMapper.updateById(question);
@@ -167,7 +169,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public boolean addAccept(long questionId) {
         Question question = baseMapper.selectById(questionId);
-        synchronized (String.valueOf(questionId).intern()){
+        Object object = concurrentHashMap.computeIfAbsent(questionId, s -> new Object());
+        synchronized (object){
             question.setAcceptedNum(question.getAcceptedNum() + 1);
         }
         int insert = baseMapper.updateById(question);
