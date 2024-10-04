@@ -32,7 +32,7 @@ public class JwtUtils {
     public static DecodedJWT getTokenInfo(String token){
 
         try {
-            DecodedJWT verify=JWT.require(Algorithm.HMAC256(APP_SECRET)).build().verify(token);
+            DecodedJWT verify=JWT.require(Algorithm.HMAC256( APP_SECRET)).build().verify(token);
             return verify;
         }catch (Exception e){
             return null;

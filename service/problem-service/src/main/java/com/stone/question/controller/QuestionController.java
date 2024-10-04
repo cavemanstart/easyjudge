@@ -23,6 +23,7 @@ import com.stone.model.vo.question.QuestionAddVO;
 import com.stone.model.vo.question.QuestionFavourVO;
 import com.stone.model.vo.question.QuestionSubmitVO;
 import com.stone.model.vo.question.QuestionVO;
+import com.stone.question.redis.RedisDistributedLock;
 import com.stone.question.service.QuestionFavourService;
 import com.stone.question.service.QuestionService;
 import com.stone.question.service.QuestionSubmitService;
@@ -329,13 +330,11 @@ public class QuestionController {
         }
         final User loginUser = userFeignClient.getLoginUser(request.getHeader("Authorization"));
         String key = questionSubmitAddRequest.getQuestionId() + String.valueOf(loginUser.getId());
-        Long questionSubmitId = redisTemplate.opsForValue().get(key);
+        Long questionSubmitId = null;
         QuestionAddVO questionAddVO = new QuestionAddVO();
-        if(questionSubmitId!=null){
-            questionAddVO.setQuestionSubmitId(questionSubmitId);
-            QuestionSubmit questionSubmit = questionSubmitService.getById(questionSubmitId);
-            questionAddVO.setStatus(questionSubmit.getStatus());
-            return ResultUtils.success(questionAddVO);
+        RedisDistributedLock redisDistributedLock = new RedisDistributedLock(key,"default_value");
+        if(!redisDistributedLock.lock()){//竞争锁失败
+            return ResultUtils.error(318,"请勿重复提交");
         }
         //没有走缓存用semaphore限流
         try {
